@@ -2,10 +2,10 @@ langchain
 langchain-google-genai
 langchain-core
 langchain-community
+duckduckgo-search
 faiss-cpu
 deepeval
 streamlit
-tavily-python
 pydantic
 python-dotenv
 google-generativeai
