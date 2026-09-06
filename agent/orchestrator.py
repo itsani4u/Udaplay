@@ -22,7 +22,8 @@ class UdaPlayOrchestrator:
             
             return {
                 "final_response": f"{response.content}\n\n*Source: Internal Database (FAISS)*",
-                "source_type": "Internal Database (FAISS)"
+                "source_type": "Internal Database (FAISS)",
+                "context": internal_result
             }
 
         # Step 3: Trigger DuckDuckGo fallback if internal matches fail
@@ -35,14 +36,16 @@ class UdaPlayOrchestrator:
             
             return {
                 "final_response": f"{response.content}\n\n*Source: Web Search (DuckDuckGo)*",
-                "source_type": "Web Search (DuckDuckGo)"
+                "source_type": "Web Search (DuckDuckGo)",
+                "context": web_result
             }
 
         # Fallback if both searches yield no usable data
         fallback_msg = "I apologize, but I could not find relevant information in either the internal database or via web search."
         return {
             "final_response": fallback_msg,
-            "source_type": "None"
+            "source_type": "None",
+            "context": "No context retrieved."
         }
 
     def route_and_execute(self, query: str) -> dict:
