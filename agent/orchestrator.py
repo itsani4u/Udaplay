@@ -8,18 +8,18 @@ class UdaPlayOrchestrator:
         self.llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.2)
 
     def run(self, query: str) -> str:
-        # Invoke the LangChain tool directly
+        # 1. Execute the internal search tool
         internal_result = query_internal_games_db.invoke(query)
 
-        # Check if vectorstore returned valid documents
+        # 2. Check if the tool returned actionable context
         if internal_result not in ["NO_RESULTS_FOUND", "NO_CONFIDENT_RESULTS_FOUND"]:
-            logger.info(f"Sufficient internal data found for query: '{query}'")
-            prompt = f"Answer the user query based ONLY on this context:\n\n{internal_result}\n\nQuery: {query}"
+            logger.info(f"High-confidence internal match found for: '{query}'")
+            prompt = f"Answer the user query based ONLY on this internal context:\n\n{internal_result}\n\nQuery: {query}"
             response = self.llm.invoke(prompt)
             return f"{response.content}\n\n*Source: Internal Database (FAISS)*"
 
-        # Fallback to DuckDuckGo when internal database has no confident match
-        logger.info(f"No confident internal match for '{query}'. Invoking web search tool...")
+        # 3. Automatic fallback to DuckDuckGo when internal DB misses
+        logger.info(f"Internal context missing or uncertain for '{query}'. Falling back to DuckDuckGo search...")
         web_result = search_web_gaming_data.invoke(query) if hasattr(search_web_gaming_data, 'invoke') else search_web_gaming_data(query)
 
         if web_result and "Web search error" not in web_result:
