@@ -2,6 +2,7 @@ from langchain.tools import tool
 from src.vectorstore import build_or_load_vectorstore
 from src.logger import logger
 
+# Initialize once at module load
 vectorstore = build_or_load_vectorstore()
 
 @tool
@@ -15,7 +16,8 @@ def query_internal_games_db(query: str) -> str:
     
     matched_docs = []
     for doc, score in results:
-        if score < 1.2:  
+        # Note: L2 distance in FAISS usually needs < 0.8 to 1.0 for high relevance.
+        if score < 0.85:
             matched_docs.append(doc.page_content)
     
     if not matched_docs:
