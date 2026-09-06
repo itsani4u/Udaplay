@@ -7,6 +7,10 @@ class UdaPlayOrchestrator:
     def __init__(self):
         self.llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.2)
 
+    def route_and_execute(self, query: str) -> str:
+        """Alias method to support app.py interface requirements."""
+        return self.run(query)
+
     def run(self, query: str) -> str:
         # 1. Execute the internal search tool
         internal_result = query_internal_games_db.invoke(query)
